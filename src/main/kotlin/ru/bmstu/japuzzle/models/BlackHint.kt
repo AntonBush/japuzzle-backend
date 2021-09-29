@@ -2,7 +2,7 @@ package ru.bmstu.japuzzle.models
 
 import java.awt.Color
 
-class BlackHint(
+data class BlackHint(
     override val count: Int
 ) : Hint {
     override val color: Color
