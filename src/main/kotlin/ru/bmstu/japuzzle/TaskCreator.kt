@@ -1,7 +1,8 @@
 package ru.bmstu.japuzzle
 
+import ru.bmstu.japuzzle.models.Player
 import ru.bmstu.japuzzle.models.Task
 
 interface TaskCreator {
-    fun createTask(): Task
+    fun createTask(id: Long, player: Player): Task
 }
