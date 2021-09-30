@@ -1,7 +1,9 @@
 package ru.bmstu.japuzzle.models
 
-import java.awt.Color
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import ru.bmstu.japuzzle.TaskSerializer
 
+@JsonSerialize(using = TaskSerializer::class)
 interface Task {
     val solved: Boolean
     val hints: Hints
