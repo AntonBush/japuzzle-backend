@@ -9,7 +9,7 @@ import ru.bmstu.japuzzle.models.*
 class TaskController {
 
     val newTask: (String) -> Task = { username ->
-        CheckToSolveTask(0L, Player(0L, username), RandomBlackGameField(3, 3))
+        CheckToSolveTask(0L, User(0L, username), RandomBlackGameField(3, 3))
     }
 
     val task: Task = newTask("default")

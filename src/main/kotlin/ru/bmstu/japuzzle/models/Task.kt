@@ -6,7 +6,7 @@ import ru.bmstu.japuzzle.TaskSerializer
 @JsonSerialize(using = TaskSerializer::class)
 interface Task {
     val id: Long
-    val user: Player
+    val user: User
     val solved: Boolean
     val hints: Hints
     val gameField: GameField

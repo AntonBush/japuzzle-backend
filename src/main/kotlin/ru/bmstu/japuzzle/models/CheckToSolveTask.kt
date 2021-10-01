@@ -4,7 +4,7 @@ import java.awt.Color
 
 class CheckToSolveTask(
     override val id: Long,
-    override val user: Player,
+    override val user: User,
     override val gameField: GameField
 ) : Task {
     override val solved: Boolean
