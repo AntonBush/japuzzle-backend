@@ -2,7 +2,7 @@ package ru.bmstu.japuzzle.controllers
 
 import org.springframework.web.bind.annotation.*
 import ru.bmstu.japuzzle.models.Hints
-import ru.bmstu.japuzzle.models.LazyHintsTask
+import ru.bmstu.japuzzle.models.CheckToSolveTask
 import ru.bmstu.japuzzle.models.RandomBlackGameField
 import ru.bmstu.japuzzle.models.Task
 
@@ -10,7 +10,7 @@ import ru.bmstu.japuzzle.models.Task
 @RequestMapping("/task", params = ["userid"])
 class TaskController {
 
-    val task: Task = LazyHintsTask(RandomBlackGameField(5, 5))
+    val task: Task = CheckToSolveTask(RandomBlackGameField(5, 5))
 
     @GetMapping("/new")
     fun new(

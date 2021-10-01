@@ -13,7 +13,16 @@ class TaskSerializer : JsonSerializer<Task>() {
         }
         gen.writeStartObject()
         gen.writeBooleanField("solved", value.solved)
-        gen.writeObjectField("field", value.gameField)
+        gen.writeFieldName("field")
+        if (value.solved) {
+            gen.writeObject(value.gameField)
+        } else {
+            gen.writeStartObject()
+            gen.writeNumberField("width", value.gameField.width)
+            gen.writeNumberField("height", value.gameField.height)
+            gen.writeObjectField("cells", null)
+            gen.writeEndObject()
+        }
         gen.writeObjectField("hints", value.hints)
         gen.writeEndObject()
     }

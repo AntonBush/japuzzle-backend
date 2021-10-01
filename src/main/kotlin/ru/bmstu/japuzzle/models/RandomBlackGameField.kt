@@ -6,14 +6,9 @@ class RandomBlackGameField(
     override val width: Int,
     override val height: Int
 ) : GameField {
-    private val cells: List<List<Color?>> = List(height) { randomizeLine(width) }
-
-    override fun get(row: Int, column: Int): Color? {
-        if (row !in 0 until width || column !in 0 until height) {
-            throw IllegalArgumentException("Out of bounds row:$row;column:$column;width:$width;height:$height")
-        }
-        return cells[row][column]
-    }
+    override val colors: List<Color>
+        get() = listOf(Color.BLACK)
+    override val cells: List<List<Color?>> = List(height) { randomizeLine(width) }
 
     override fun equals(other: Any?): Boolean {
         return cells == other

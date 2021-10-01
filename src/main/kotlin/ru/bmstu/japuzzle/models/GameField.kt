@@ -8,6 +8,7 @@ import java.awt.Color
 interface GameField {
     val width: Int
     val height: Int
-    operator fun get(row: Int, column: Int): Color?
+    val colors: List<Color>
+    val cells: List<List<Color?>>
     override operator fun equals(other: Any?): Boolean
 }

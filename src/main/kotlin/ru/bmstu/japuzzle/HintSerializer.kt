@@ -11,11 +11,8 @@ class HintSerializer : JsonSerializer<Hint>() {
             return
         }
         gen.writeStartObject()
-        var color = (value.color.rgb % (256 * 256 * 256)).toString(16).uppercase()
-        for (i in 1..(6 - color.length)) {
-            color = "0$color"
-        }
-        gen.writeStringField("color", "#${color}")
+        val hexColor = "#${Utils.rgbToHex(value.color.rgb)}"
+        gen.writeStringField("color", hexColor)
         gen.writeNumberField("count", value.count)
         gen.writeEndObject()
     }

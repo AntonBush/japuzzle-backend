@@ -7,7 +7,7 @@ import ru.bmstu.japuzzle.TaskSerializer
 interface Task {
     val solved: Boolean
     val hints: Hints
-    val gameField: GameField?
+    val gameField: GameField
 
     fun check(solution: GameField): Boolean
 }

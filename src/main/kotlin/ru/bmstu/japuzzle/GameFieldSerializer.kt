@@ -14,24 +14,13 @@ class GameFieldSerializer : JsonSerializer<GameField>() {
         gen.writeNumberField("width", value.width)
         gen.writeNumberField("height", value.height)
         gen.writeFieldName("cells")
-        gen.writeStartArray()
-        for (i in 0 until value.height) {
-            gen.writeStartArray()
-            for (j in 0 until value.width) {
-                val colorInt = value[i, j]
-                if (colorInt != null) {
-                    var color = (colorInt.rgb % (256 * 256 * 256)).toString(16).uppercase()
-                    for (k in 1..(6 - color.length)) {
-                        color = "0$color"
-                    }
-                    gen.writeString(color)
-                } else {
-                    gen.writeObject(null)
-                }
+        Utils.serializeListList(value.cells, gen) { color, g ->
+            if (color != null) {
+                gen.writeString("#${Utils.rgbToHex(color.rgb)}")
+            } else {
+                gen.writeObject(null)
             }
-            gen.writeEndArray()
         }
-        gen.writeEndArray()
         gen.writeEndObject()
     }
 }
