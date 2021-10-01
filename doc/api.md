@@ -26,7 +26,7 @@ GET /task/list
 | `user` | `string` | **Required.** Username. |
 
 ```http request
-/?name="pojo"
+/?user="pojo"
 ```
 
 ##### Response
@@ -141,7 +141,7 @@ GET /task/:task_id
 | `user` | `string` | **Required.** Username. |
 
 ```http request
-/?name="pojo"
+/?user="pojo"
 ```
 
 ##### Response
@@ -206,7 +206,7 @@ GET /task/new
 | `colors` | `integer` | **Required.** Colors count. |
 
 ```http request
-/?name="pojo"&rows=2&columns=2&colors=1
+/?user="pojo"&rows=2&columns=2&colors=1
 ```
 
 ##### Response
@@ -265,6 +265,10 @@ POST /task/:task_id
 | :----: | :----: | :---------------: |
 | `user` | `string` | **Required.** Username. |
 | `solution` | `matrix` | **Required.** Post body. |
+
+```http request
+/?user="pojo"
+```
 
 ```json
 {
