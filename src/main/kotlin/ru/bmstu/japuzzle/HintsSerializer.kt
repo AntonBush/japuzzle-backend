@@ -12,11 +12,8 @@ class HintsSerializer : JsonSerializer<Hints>() {
             return
         }
         gen.writeStartObject()
-        gen.writeFieldName("rows")
-        Utils.serializeListList(value.rows, gen)
-
-        gen.writeFieldName("columns")
-        Utils.serializeListList(value.columns, gen)
+        gen.writeObjectField("rows", value.rows)
+        gen.writeObjectField("columns", value.columns)
         gen.writeEndObject()
     }
 }

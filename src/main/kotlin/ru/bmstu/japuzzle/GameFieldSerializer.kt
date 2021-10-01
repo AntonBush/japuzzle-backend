@@ -13,14 +13,7 @@ class GameFieldSerializer : JsonSerializer<GameField>() {
         gen.writeStartObject()
         gen.writeNumberField("width", value.width)
         gen.writeNumberField("height", value.height)
-        gen.writeFieldName("cells")
-        Utils.serializeListList(value.cells, gen) { color, g ->
-            if (color != null) {
-                gen.writeString("#${Utils.rgbToHex(color.rgb)}")
-            } else {
-                gen.writeObject(null)
-            }
-        }
+        gen.writeObjectField("cells", value.cells)
         gen.writeEndObject()
     }
 }
