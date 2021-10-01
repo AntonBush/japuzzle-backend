@@ -7,7 +7,7 @@ import ru.bmstu.japuzzle.models.RandomBlackGameField
 import ru.bmstu.japuzzle.models.Task
 
 @RestController
-@RequestMapping("/task", params = ["userid"])
+@RequestMapping("/task", params = ["user"])
 class TaskController {
 
     val newTask: () -> Task = {
@@ -22,14 +22,14 @@ class TaskController {
 
     @GetMapping("/new")
     fun new(
-        @RequestParam("userid") userId: String
+        @RequestParam("user") userId: String
     ): Task? {
         return newTask()
     }
 
     @GetMapping("/list")
     fun list(
-        @RequestParam("userid") userId: String
+        @RequestParam("user") userId: String
     ): List<Task>? {
         return List(1) { task }
     }
@@ -37,7 +37,7 @@ class TaskController {
     @GetMapping("/info/{id}")
     fun info(
         @PathVariable id: Long,
-        @RequestParam("userid") userId: String
+        @RequestParam("user") userId: String
     ): Task? {
         return task
     }
@@ -45,7 +45,7 @@ class TaskController {
     @PostMapping("/check/{id}")
     fun check(
         @PathVariable id: Long,
-        @RequestParam("userid") userId: String
+        @RequestParam("user") userId: String
     ): Boolean {
         return false
     }
