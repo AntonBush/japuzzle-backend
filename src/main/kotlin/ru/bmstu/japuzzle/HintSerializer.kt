@@ -7,12 +7,15 @@ import ru.bmstu.japuzzle.models.Hint
 
 class HintSerializer : JsonSerializer<Hint>() {
     override fun serialize(value: Hint?, gen: JsonGenerator?, serializers: SerializerProvider?) {
-        if (gen == null || value == null) {
+        if (gen == null) {
+            return
+        }
+        if (value == null) {
+            gen.writeObject(value)
             return
         }
         gen.writeStartObject()
-        val hexColor = "#${Utils.rgbToHex(value.color.rgb)}"
-        gen.writeStringField("color", hexColor)
+        gen.writeObjectField("color", "#${value.color.rgbToHex().substring(2)}")
         gen.writeNumberField("count", value.count)
         gen.writeEndObject()
     }

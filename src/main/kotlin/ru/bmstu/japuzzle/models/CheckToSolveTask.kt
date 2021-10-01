@@ -21,18 +21,35 @@ class CheckToSolveTask(
         return List(lines) { lineIndex ->
             val sideHints = ArrayList<Hint>()
             var count = 0
+            var color: Color? = null
             for (cellIndex in 0 until lineLength) {
                 val (i, j) = if (isRow) Pair(lineIndex, cellIndex) else Pair(cellIndex, lineIndex)
                 when {
-                    gameField.cells[i][j] != null -> ++count
-                    count != 0 -> {
-                        sideHints.add(Hint(Color.BLACK, count))
-                        count = 0
+                    color == gameField.cells[i][j] -> {
+                        if (color != null) {
+                            ++count
+                        }
+                    }
+                    color != gameField.cells[i][j] -> {
+                        count = when {
+                            color == null -> {
+                                1
+                            }
+                            gameField.cells[i][j] == null -> {
+                                sideHints.add(Hint(color, count))
+                                0
+                            }
+                            else -> {
+                                sideHints.add(Hint(color, count))
+                                1
+                            }
+                        }
+                        color = gameField.cells[i][j]
                     }
                 }
             }
             if (count != 0) {
-                sideHints.add(Hint(Color.BLACK, count))
+                sideHints.add(Hint(color!!, count))
             }
             return@List List(sideHints.size) { i -> sideHints[i] }
         }

@@ -10,13 +10,21 @@ import ru.bmstu.japuzzle.models.Task
 @RequestMapping("/task", params = ["userid"])
 class TaskController {
 
-    val task: Task = CheckToSolveTask(RandomBlackGameField(5, 5))
+    val newTask: () -> Task = {
+        CheckToSolveTask(RandomBlackGameField(3, 3))
+    }
+
+    val task: Task = newTask()
+
+    init {
+        task.check(task.gameField)
+    }
 
     @GetMapping("/new")
     fun new(
         @RequestParam("userid") userId: String
-    ): Hints? {
-        return task.hints
+    ): Task? {
+        return newTask()
     }
 
     @GetMapping("/list")

@@ -11,7 +11,16 @@ class RandomBlackGameField(
     override val cells: List<List<Color?>> = List(height) { randomizeLine(width) }
 
     override fun equals(other: Any?): Boolean {
-        return cells == other
+        if (this === other) {
+            return true
+        }
+        if (other == null) {
+            return false
+        }
+        if (other !is GameField) {
+            return false
+        }
+        return cells == other.cells
     }
 
     override fun hashCode(): Int {
