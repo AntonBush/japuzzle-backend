@@ -22,13 +22,20 @@ class GameFieldSerializer : JsonSerializer<GameField>() {
             gen.writeStartObject()
             gen.writeNumberField("width", value.width)
             gen.writeNumberField("height", value.height)
+
+            gen.writeFieldName("colors")
+            gen.writeStartArray()
+            for (color in value.colors) {
+                gen.writeString("#${color.rgbToHex().substring(2)}")
+            }
+            gen.writeEndArray()
+
             gen.writeFieldName("cells")
             if (leaveCells) {
                 gen.writeStartArray()
-                for (i in 0..value.cells.lastIndex) {
+                for (row in value.cells) {
                     gen.writeStartArray()
-                    for (j in 0..value.cells[i].lastIndex) {
-                        val color = value.cells[i][j]
+                    for (color in row) {
                         if (color != null) {
                             gen.writeString("#${color.rgbToHex().substring(2)}")
                         } else {

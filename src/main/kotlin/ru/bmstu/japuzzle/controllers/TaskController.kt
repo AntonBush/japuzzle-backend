@@ -1,20 +1,18 @@
 package ru.bmstu.japuzzle.controllers
 
 import org.springframework.web.bind.annotation.*
-import ru.bmstu.japuzzle.models.Hints
-import ru.bmstu.japuzzle.models.CheckToSolveTask
-import ru.bmstu.japuzzle.models.RandomBlackGameField
-import ru.bmstu.japuzzle.models.Task
+import ru.bmstu.japuzzle.models.*
 
+@CrossOrigin
 @RestController
 @RequestMapping("/task", params = ["user"])
 class TaskController {
 
-    val newTask: () -> Task = {
-        CheckToSolveTask(RandomBlackGameField(3, 3))
+    val newTask: (String) -> Task = { username ->
+        CheckToSolveTask(0L, Player(0L, username), RandomBlackGameField(3, 3))
     }
 
-    val task: Task = newTask()
+    val task: Task = newTask("default")
 
     init {
         task.check(task.gameField)
@@ -22,14 +20,14 @@ class TaskController {
 
     @GetMapping("/new")
     fun new(
-        @RequestParam("user") userId: String
+        @RequestParam("user") user: String
     ): Task? {
-        return newTask()
+        return newTask(user)
     }
 
     @GetMapping("/list")
     fun list(
-        @RequestParam("user") userId: String
+        @RequestParam("user") user: String
     ): List<Task>? {
         return List(1) { task }
     }
@@ -37,7 +35,7 @@ class TaskController {
     @GetMapping("/info/{id}")
     fun info(
         @PathVariable id: Long,
-        @RequestParam("user") userId: String
+        @RequestParam("user") user: String
     ): Task? {
         return task
     }
@@ -45,7 +43,7 @@ class TaskController {
     @PostMapping("/check/{id}")
     fun check(
         @PathVariable id: Long,
-        @RequestParam("user") userId: String
+        @RequestParam("user") user: String
     ): Boolean {
         return false
     }

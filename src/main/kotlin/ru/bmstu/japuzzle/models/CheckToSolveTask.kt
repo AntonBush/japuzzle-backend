@@ -3,6 +3,8 @@ package ru.bmstu.japuzzle.models
 import java.awt.Color
 
 class CheckToSolveTask(
+    override val id: Long,
+    override val user: Player,
     override val gameField: GameField
 ) : Task {
     override val solved: Boolean
