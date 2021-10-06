@@ -15,6 +15,7 @@ class TaskController {
     val task: Task = newTask("default")
 
     init {
+        System.`in`
         task.check(task.gameField)
     }
 
