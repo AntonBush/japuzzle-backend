@@ -8,15 +8,15 @@ import ru.bmstu.japuzzle.models.*
 @RequestMapping("/task", params = ["user"])
 class TaskController {
 
-    val newTask: (String) -> Task = { username ->
-        CheckToSolveTask(0L, User(0L, username), RandomBlackGameField(3, 3))
+    fun newTask(username: String, taskId: Long = 0L): Task {
+        return CheckToSolveTask(taskId, User(0L, username), RandomBlackGameField(3, 3))
     }
 
-    val task: Task = newTask("default")
+    val tasks: List<Task> = listOf(newTask("default", 0), newTask("solved", 1))
 
     init {
-        System.`in`
-        task.check(task.gameField)
+        val solvedTask = tasks.find { t -> t.user.name == "solved" }
+        solvedTask!!.check(solvedTask.gameField)
     }
 
     @GetMapping("/new")
@@ -30,7 +30,7 @@ class TaskController {
     fun list(
         @RequestParam("user") user: String
     ): List<Task>? {
-        return List(1) { task }
+        return tasks
     }
 
     @GetMapping("/info/{id}")
@@ -38,7 +38,7 @@ class TaskController {
         @PathVariable id: Long,
         @RequestParam("user") user: String
     ): Task? {
-        return task
+        return tasks.find { t -> t.id == id }
     }
 
     @PostMapping("/check/{id}")
