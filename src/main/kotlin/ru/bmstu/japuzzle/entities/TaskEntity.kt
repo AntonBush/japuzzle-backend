@@ -8,7 +8,6 @@ import javax.persistence.*
 @Table(name="TaskEntity")
 class TaskEntity(
     @ManyToOne
-    @Column(nullable = false)
     val user: UserEntity,
 
     @Column(nullable = false)
