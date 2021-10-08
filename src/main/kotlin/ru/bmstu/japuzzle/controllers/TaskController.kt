@@ -55,13 +55,16 @@ class TaskController @Autowired constructor(
     @GetMapping("/new")
     fun new(
         @RequestParam("user") username: String,
-        @RequestParam(value = "columns", required = false) width: Int = 3,
-        @RequestParam(value = "rows", required = false) height: Int = 3,
-        @RequestParam(value = "colors", required = false) colors: Int = 2,
+        @RequestParam(value = "columns", required = false) width: Int?,
+        @RequestParam(value = "rows", required = false) height: Int?,
+        @RequestParam(value = "colors", required = false) colors: Int?,
     ): ResponseEntity<Any?> {
         val user = userRepository.findByName(username)?.toUser() ?: return ResponseEntity(HttpStatus.UNAUTHORIZED)
         return try {
-            val created = newTask(user, tasks.size.toLong())
+            val w = width ?: 3
+            val h = height ?: 3
+            val clrs = colors ?: 2
+            val created = newTask(user, tasks.size.toLong(), w, h, clrs)
             tasks.add(created)
             ResponseEntity(created, HttpStatus.CREATED)
         } catch (e: Exception) {
