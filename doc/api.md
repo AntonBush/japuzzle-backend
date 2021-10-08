@@ -44,6 +44,7 @@ Status: 200 OK
     "field": {
       "width": 3,
       "height": 3,
+      "background-color": "#FFFFFF",
       "colors": [
         "#000000"
       ],
@@ -79,24 +80,25 @@ Status: 200 OK
     "field": {
       "width": 3,
       "height": 3,
+      "background-color": "#FFFFFF",
       "colors": [
         "#000000"
       ],
       "cells": [
         [
-          null,
-          null,
-          null
+          "#FFFFFF",
+          "#FFFFFF",
+          "#FFFFFF"
         ],
         [
-          null,
+          "#FFFFFF",
           "#000000",
-          null
+          "#FFFFFF"
         ],
         [
-          null,
-          null,
-          null
+          "#FFFFFF",
+          "#FFFFFF",
+          "#FFFFFF"
         ]
       ]
     },
@@ -158,6 +160,7 @@ Status: 200 OK
   "field": {
     "width": 3,
     "height": 3,
+    "background-color": "#FFFFFF",
     "colors": [
       "#000000"
     ],
@@ -223,6 +226,7 @@ Status: 201 Created
   "field": {
     "width": 2,
     "height": 2,
+    "background-color": "#FFFFFF",
     "colors": [
       "#000000"
     ],
@@ -274,12 +278,12 @@ POST /task/:task_id
 {
   "solution": [
     [
-      null,
+      "#FFFFFF",
       "#000000"
     ],
     [
-      null,
-      null
+      "#FFFFFF",
+      "#FFFFFF"
     ]
   ]
 }
