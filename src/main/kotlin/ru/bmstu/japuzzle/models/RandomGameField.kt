@@ -9,14 +9,11 @@ open class RandomGameField(
 ) : GameField(
     width,
     height,
-    colors
-) {
-    override val cells: List<List<Color>> = List(height) { randomizeLine(width) }
-
-    private fun randomizeLine(length: Int): List<Color> {
+    colors,
+    List(height) {
         val line = ArrayList<Color>()
 
-        var free = length
+        var free = width
         val leadingSpaces = (0..free).random()
         free -= leadingSpaces
         line.addAll(List(leadingSpaces) { colors.backgroundColor })
@@ -32,6 +29,6 @@ open class RandomGameField(
                 line.addAll(List(randomSpaces) { colors.backgroundColor })
             }
         }
-        return List(length) { i -> line[i] }
+        return@List List(width) { i -> line[i] }
     }
-}
+)

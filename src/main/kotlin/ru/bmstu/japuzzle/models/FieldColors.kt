@@ -7,10 +7,10 @@ class FieldColors(
 ) {
     init {
         val size = fieldColors.size
-        if (size < 2) {
+        if (size < 1) {
             throw IllegalArgumentException("field colors count must be greater than 2; actual:$size")
         }
     }
     val backgroundColor = fieldColors[0]
-    val colors = fieldColors.drop(1)
+    val colors = (fieldColors.toSet() - backgroundColor).toList()
 }

@@ -17,7 +17,7 @@ class SecureTask(
         } else {
             emptyField
         }
-    private val emptyField = GameField(
+    private val emptyField: GameField = EmptyGameField(
         gameField.width,
         gameField.height,
         gameField.colors)
