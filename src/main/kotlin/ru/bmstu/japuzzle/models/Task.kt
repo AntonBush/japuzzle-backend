@@ -5,7 +5,7 @@ import ru.bmstu.japuzzle.TaskSerializer
 import java.awt.Color
 
 @JsonSerialize(using = TaskSerializer::class)
-abstract class Task(
+open class Task(
     open val id: Long,
     open val user: User,
     open val gameField: GameField

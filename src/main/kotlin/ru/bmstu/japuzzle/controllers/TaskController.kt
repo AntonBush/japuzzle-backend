@@ -4,8 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import ru.bmstu.japuzzle.entities.GameFieldEmbeddable
+import ru.bmstu.japuzzle.entities.TaskEntity
+import ru.bmstu.japuzzle.entities.UserEntity
 import ru.bmstu.japuzzle.models.*
+import ru.bmstu.japuzzle.repositories.TaskRepository
 import ru.bmstu.japuzzle.repositories.UserRepository
+import ru.bmstu.japuzzle.rgbToHex
 import java.awt.Color
 import kotlin.math.max
 
@@ -13,12 +18,21 @@ import kotlin.math.max
 @RestController
 @RequestMapping("/task")
 class TaskController @Autowired constructor(
-    val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val taskRepository: TaskRepository,
 ) {
-    val COLORS = listOf<Color>(Color.WHITE, Color.BLACK, Color.RED, Color.GREEN, Color.BLUE)
+    private val COLORS = listOf<Color>(Color.WHITE, Color.BLACK, Color.RED, Color.GREEN, Color.BLUE)
 
-    fun newTask(user: User,
-                taskId: Long = 0L,
+    private val DEFAULT_USER = userRepository.save(UserEntity("default"))
+    private val SOLVED_USER = userRepository.save(UserEntity("solved"))
+
+    init {
+        newTask(DEFAULT_USER)
+        val st = newTask(SOLVED_USER)
+        taskRepository.findById(st.id).get().solved = true
+    }
+
+    private fun newTask(user: UserEntity,
                 w: Int = 3,
                 h: Int = 3,
                 colors: Int = 2
@@ -31,27 +45,27 @@ class TaskController @Autowired constructor(
         }
         val clrs = COLORS.dropLast(max(0, COLORS.size - colors))
         val fc = FieldColors(clrs)
+        val gf = RandomGameField(w, h, fc)
 
-        return SecureTask(
-            taskId,
+        return taskRepository.save(TaskEntity(
             user,
-            RandomGameField(3, 3, fc))
+            false,
+            GameFieldEmbeddable(
+                gf.width,
+                gf.height,
+                gf.colors.backgroundColor.rgbToHex(),
+                gf.colors.colors.mapIndexed { i, c ->
+                    i to c.rgbToHex()
+                }.toMap(),
+                gf.cells.flatMapIndexed { i,  l ->
+                    l.toList().mapIndexed { j, c ->
+                        (i * gf.width + j) to c.rgbToHex()
+                    }
+                }.toMap()
+            ),
+        )).toTask()
     }
 
-    fun newTask(user: User, taskId: Long = 0L): Task {
-        return SecureTask(taskId, user, RandomBlackAndWightGameField(3, 3))
-    }
-
-    fun newTask(username: String, taskId: Long = 0L): Task {
-        return newTask(User(0L, username), taskId)
-    }
-
-    val tasks: MutableList<Task> = mutableListOf(newTask("default", 0), newTask("solved", 1))
-
-    init {
-        val solvedTask = tasks.find { t -> t.user.name == "solved" }
-        solvedTask!!.check(solvedTask.gameField)
-    }
     @GetMapping("/new")
     fun new(
         @RequestParam("user") username: String,
@@ -59,13 +73,12 @@ class TaskController @Autowired constructor(
         @RequestParam(value = "rows", required = false) height: Int?,
         @RequestParam(value = "colors", required = false) colors: Int?,
     ): ResponseEntity<Any?> {
-        val user = userRepository.findByName(username)?.toUser() ?: return ResponseEntity(HttpStatus.UNAUTHORIZED)
+        val user = userRepository.findByName(username) ?: return ResponseEntity(HttpStatus.UNAUTHORIZED)
         return try {
             val w = width ?: 3
             val h = height ?: 3
             val clrs = colors ?: 2
-            val created = newTask(user, tasks.size.toLong(), w, h, clrs)
-            tasks.add(created)
+            val created = newTask(user, w, h, clrs)
             ResponseEntity(created, HttpStatus.CREATED)
         } catch (e: Exception) {
             ResponseEntity(e.message, HttpStatus.BAD_REQUEST)
@@ -76,34 +89,39 @@ class TaskController @Autowired constructor(
     fun list(
         @RequestParam("user") username: String
     ): ResponseEntity<List<Task>?> {
-        if (userRepository.existsByName(username).not()) {
-            return ResponseEntity(HttpStatus.UNAUTHORIZED)
-        }
-        return ResponseEntity(tasks, HttpStatus.OK)
+        val user = userRepository.findByName(username) ?: return ResponseEntity(HttpStatus.UNAUTHORIZED)
+        val userTasks = taskRepository.findByUser(user)?.map { te -> te.toTask() } ?: listOf()
+        val defaultTask = taskRepository.findByUser(DEFAULT_USER)?.map { te -> te.toTask() } ?: listOf()
+        val solvedTask = taskRepository.findByUser(SOLVED_USER)?.map { te -> te.toTask() } ?: listOf()
+        return ResponseEntity(userTasks + defaultTask + solvedTask, HttpStatus.OK)
     }
 
     @GetMapping("/info/{id}")
     fun info(
         @PathVariable id: Long,
-        @RequestParam("user") user: String
-    ): ResponseEntity<Task?> {
-        if (userRepository.existsByName(user).not()) {
-            return ResponseEntity(HttpStatus.UNAUTHORIZED)
+        @RequestParam("user") username: String
+    ): ResponseEntity<Task> {
+        val user = userRepository.findByName(username) ?: return ResponseEntity(HttpStatus.UNAUTHORIZED)
+        val task = taskRepository.findById(user.toUser().id)
+        if (task.isEmpty) {
+            return ResponseEntity(HttpStatus.NOT_FOUND)
         }
-        val task = tasks.find { t -> t.id == id } ?: return ResponseEntity(HttpStatus.NOT_FOUND)
-        return ResponseEntity(task, HttpStatus.OK)
+        return ResponseEntity(task.get().toTask(), HttpStatus.OK)
     }
 
     @PostMapping("/check/{id}")
     fun check(
         @PathVariable id: Long,
-        @RequestParam("user") user: String,
+        @RequestParam("user") username: String,
         @RequestBody solution: GameField
-    ): ResponseEntity<Boolean> {
-        if (userRepository.existsByName(user).not()) {
-            return ResponseEntity(HttpStatus.UNAUTHORIZED)
+    ): ResponseEntity<Task> {
+        val user = userRepository.findByName(username) ?: return ResponseEntity(HttpStatus.UNAUTHORIZED)
+        val task = taskRepository.findById(user.toUser().id)
+        if (task.isEmpty) {
+            return ResponseEntity(HttpStatus.NOT_FOUND)
         }
-        val task = tasks.find { t -> t.id == id } ?: return ResponseEntity(HttpStatus.NOT_FOUND)
-        return ResponseEntity(task.check(solution), HttpStatus.OK)
+        val t = task.get().toTask()
+        task.get().solved = t.check(solution)
+        return ResponseEntity(t, HttpStatus.OK)
     }
 }

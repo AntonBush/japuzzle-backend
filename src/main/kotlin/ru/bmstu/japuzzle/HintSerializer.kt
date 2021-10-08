@@ -15,7 +15,7 @@ class HintSerializer : JsonSerializer<Hint>() {
             return
         }
         gen.writeStartObject()
-        gen.writeObjectField("color", "#${value.color.rgbToHex().substring(2)}")
+        gen.writeObjectField("color", value.color.rgbToHex())
         gen.writeNumberField("count", value.count)
         gen.writeEndObject()
     }

@@ -22,8 +22,7 @@ class GameFieldDeserializer : JsonDeserializer<GameField>() {
             val rowList = mutableListOf<Color>()
             val row = (rowNode as ArrayNode)
             row.forEach { colorNode ->
-                val rgb = colorNode.asText().substring(1).toInt(16)
-                val color = Color(rgb)
+                val color = Color(colorNode.asText())
                 rowList.add(color)
                 colors.add(color)
             }

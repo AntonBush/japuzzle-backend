@@ -19,11 +19,11 @@ class GameFieldSerializer : JsonSerializer<GameField>() {
         gen.writeNumberField("height", value.height)
 
         gen.writeFieldName("background-color")
-        gen.writeString("#${value.colors.backgroundColor.rgbToHex().substring(2)}")
+        gen.writeString(value.colors.backgroundColor.rgbToHex())
         gen.writeFieldName("colors")
         gen.writeStartArray()
         value.colors.colors.forEach { color ->
-            gen.writeString("#${color.rgbToHex().substring(2)}")
+            gen.writeString(color.rgbToHex())
         }
         gen.writeEndArray()
 
@@ -32,7 +32,7 @@ class GameFieldSerializer : JsonSerializer<GameField>() {
         value.cells.forEach { row ->
             gen.writeStartArray()
             row.forEach { color ->
-                gen.writeString("#${color.rgbToHex().substring(2)}")
+                gen.writeString(color.rgbToHex())
             }
             gen.writeEndArray()
         }

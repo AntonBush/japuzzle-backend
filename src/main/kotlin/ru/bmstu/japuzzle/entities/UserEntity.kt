@@ -9,6 +9,9 @@ class UserEntity(
     @Column(nullable = false, unique = true)
     val name: String,
 
+    @OneToMany(mappedBy = "user")
+    val tasks: List<TaskEntity> = listOf(),
+
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
