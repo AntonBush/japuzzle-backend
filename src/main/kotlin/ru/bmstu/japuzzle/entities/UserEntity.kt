@@ -3,7 +3,8 @@ package ru.bmstu.japuzzle.entities
 import ru.bmstu.japuzzle.models.User
 import javax.persistence.*
 
-@Entity(name="User")
+@Entity
+@Table(name="UserEntity")
 class UserEntity(
     @Column(nullable = false, unique = true)
     val name: String,
