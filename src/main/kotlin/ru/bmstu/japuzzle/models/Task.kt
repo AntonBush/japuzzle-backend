@@ -8,20 +8,23 @@ import java.awt.Color
 open class Task(
     open val id: Long,
     open val user: User,
-    open val gameField: GameField
+    gameField: GameField
 ) {
+    open val gameField: GameField
+        get() = _gameField
+    protected val _gameField = gameField
     open val hints: Hints = Hints(getSideHints(isRow = true), getSideHints(isRow = false))
     open var solved: Boolean = false
         protected set
 
     open fun check(solution: GameField): Boolean {
-        solved = solved || (solution == gameField)
+        solved = solved || (solution == _gameField)
         return solved
     }
 
     protected fun getSideHints(isRow: Boolean): List<List<Hint>> {
-        val lines = if (isRow) gameField.height else gameField.width
-        val lineLength = if (isRow) gameField.width else gameField.height
+        val lines = if (isRow) _gameField.height else _gameField.width
+        val lineLength = if (isRow) _gameField.width else _gameField.height
         return List(lines) { lineIndex ->
             val sideHints = ArrayList<Hint>()
             var count = 0
@@ -29,17 +32,17 @@ open class Task(
             for (cellIndex in 0 until lineLength) {
                 val (i, j) = if (isRow) Pair(lineIndex, cellIndex) else Pair(cellIndex, lineIndex)
                 when {
-                    color == gameField.cells[i][j] -> {
-                        if (color != gameField.colors.backgroundColor) {
+                    color == _gameField.cells[i][j] -> {
+                        if (color != _gameField.colors.backgroundColor) {
                             ++count
                         }
                     }
-                    color != gameField.cells[i][j] -> {
+                    color != _gameField.cells[i][j] -> {
                         count = when {
                             color == null -> {
                                 1
                             }
-                            gameField.cells[i][j] == gameField.colors.backgroundColor -> {
+                            _gameField.cells[i][j] == _gameField.colors.backgroundColor -> {
                                 sideHints.add(Hint(color, count))
                                 0
                             }
@@ -48,7 +51,7 @@ open class Task(
                                 1
                             }
                         }
-                        color = gameField.cells[i][j]
+                        color = _gameField.cells[i][j]
                     }
                 }
             }

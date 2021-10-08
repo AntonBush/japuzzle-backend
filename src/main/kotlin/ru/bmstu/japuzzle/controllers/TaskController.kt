@@ -29,7 +29,9 @@ class TaskController @Autowired constructor(
     init {
         newTask(DEFAULT_USER)
         val st = newTask(SOLVED_USER)
-        taskRepository.findById(st.id).get().solved = true
+        val te = taskRepository.findById(st.id).get()
+        te.solved = true
+        taskRepository.save(te)
     }
 
     private fun newTask(user: UserEntity,
@@ -66,6 +68,12 @@ class TaskController @Autowired constructor(
         )).toTask()
     }
 
+    private fun getDefaultTasks(): List<TaskEntity> {
+        val defaultTask = taskRepository.findByUser(DEFAULT_USER)
+        val solvedTask = taskRepository.findByUser(SOLVED_USER)
+        return defaultTask + solvedTask
+    }
+
     @GetMapping("/new")
     fun new(
         @RequestParam("user") username: String,
@@ -90,23 +98,20 @@ class TaskController @Autowired constructor(
         @RequestParam("user") username: String
     ): ResponseEntity<List<Task>?> {
         val user = userRepository.findByName(username) ?: return ResponseEntity(HttpStatus.UNAUTHORIZED)
-        val userTasks = taskRepository.findByUser(user)?.map { te -> te.toTask() } ?: listOf()
-        val defaultTask = taskRepository.findByUser(DEFAULT_USER)?.map { te -> te.toTask() } ?: listOf()
-        val solvedTask = taskRepository.findByUser(SOLVED_USER)?.map { te -> te.toTask() } ?: listOf()
-        return ResponseEntity(userTasks + defaultTask + solvedTask, HttpStatus.OK)
+        val userTasks = (taskRepository.findByUser(user) + getDefaultTasks()).map { te -> te.toTask() }
+        return ResponseEntity(userTasks, HttpStatus.OK)
     }
 
-    @GetMapping("/info/{id}")
+    @GetMapping("/{id}")
     fun info(
         @PathVariable id: Long,
         @RequestParam("user") username: String
     ): ResponseEntity<Task> {
         val user = userRepository.findByName(username) ?: return ResponseEntity(HttpStatus.UNAUTHORIZED)
-        val task = taskRepository.findById(user.toUser().id)
-        if (task.isEmpty) {
-            return ResponseEntity(HttpStatus.NOT_FOUND)
-        }
-        return ResponseEntity(task.get().toTask(), HttpStatus.OK)
+        val userTask = (taskRepository.findByUser(user) + getDefaultTasks()).find { te -> te.id == id }?.toTask()
+            ?: return ResponseEntity(HttpStatus.NOT_FOUND)
+
+        return ResponseEntity(userTask, HttpStatus.OK)
     }
 
     @PostMapping("/check/{id}")
@@ -116,12 +121,11 @@ class TaskController @Autowired constructor(
         @RequestBody solution: GameField
     ): ResponseEntity<Task> {
         val user = userRepository.findByName(username) ?: return ResponseEntity(HttpStatus.UNAUTHORIZED)
-        val task = taskRepository.findById(user.toUser().id)
-        if (task.isEmpty) {
-            return ResponseEntity(HttpStatus.NOT_FOUND)
-        }
-        val t = task.get().toTask()
-        task.get().solved = t.check(solution)
-        return ResponseEntity(t, HttpStatus.OK)
+        val userTaskEntity = (taskRepository.findByUser(user) + getDefaultTasks()).find { te -> te.id == id }
+            ?: return ResponseEntity(HttpStatus.NOT_FOUND)
+        val task = userTaskEntity.toTask()
+        userTaskEntity.solved = task.check(solution)
+        taskRepository.save(userTaskEntity)
+        return ResponseEntity(task, HttpStatus.OK)
     }
 }

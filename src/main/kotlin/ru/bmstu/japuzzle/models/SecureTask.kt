@@ -13,7 +13,7 @@ class SecureTask(
 ) {
     override val gameField: GameField
         get() = if (solved || !initFinished) {
-            super.gameField
+            super._gameField
         } else {
             emptyField
         }

@@ -7,5 +7,5 @@ import ru.bmstu.japuzzle.entities.UserEntity
 
 @Repository
 interface TaskRepository : JpaRepository<TaskEntity, Long> {
-    fun findByUser(user: UserEntity): List<TaskEntity>?
+    fun findByUser(user: UserEntity): List<TaskEntity>
 }

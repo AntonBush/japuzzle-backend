@@ -22,10 +22,15 @@ class TaskEntity(
     val id: Long? = null,
 ) {
     fun toTask(): Task {
-        return SecureTask(
+        val gf = gameField.toGameField()
+        val t = SecureTask(
             id!!,
             user.toUser(),
-            gameField.toGameField()
+            gf
         )
+        if (solved) {
+            t.check(gf)
+        }
+        return t
     }
 }
