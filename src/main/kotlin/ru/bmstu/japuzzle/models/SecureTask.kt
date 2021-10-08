@@ -12,7 +12,7 @@ class SecureTask(
     gameField
 ) {
     override val gameField: GameField
-        get() = if (solved) {
+        get() = if (solved || !initFinished) {
             super.gameField
         } else {
             emptyField
@@ -21,4 +21,11 @@ class SecureTask(
         gameField.width,
         gameField.height,
         gameField.colors)
+    /* Костыль основанный на системе типов котлин
+     * Свойство emptyField до инициализации этого класса == null
+     * Но в базовом классе свойство gameField используется,
+     * поэтому там возникает NullPointerException
+     * initFinished — Boolean, значение поумолчанию которого false
+     */
+    private val initFinished = true
 }

@@ -42,7 +42,7 @@ class TaskController @Autowired constructor(
     fun list(
         @RequestParam("user") username: String
     ): ResponseEntity<List<Task>?> {
-        if (userRepository.existsByName(username)) {
+        if (userRepository.existsByName(username).not()) {
             return ResponseEntity(HttpStatus.UNAUTHORIZED)
         }
         return ResponseEntity(tasks, HttpStatus.OK)
@@ -53,7 +53,7 @@ class TaskController @Autowired constructor(
         @PathVariable id: Long,
         @RequestParam("user") user: String
     ): ResponseEntity<Task?> {
-        if (userRepository.existsByName(user)) {
+        if (userRepository.existsByName(user).not()) {
             return ResponseEntity(HttpStatus.UNAUTHORIZED)
         }
         val task = tasks.find { t -> t.id == id } ?: return ResponseEntity(HttpStatus.NOT_FOUND)
@@ -66,7 +66,7 @@ class TaskController @Autowired constructor(
         @RequestParam("user") user: String,
         @RequestBody solution: GameField
     ): ResponseEntity<Boolean> {
-        if (userRepository.existsByName(user)) {
+        if (userRepository.existsByName(user).not()) {
             return ResponseEntity(HttpStatus.UNAUTHORIZED)
         }
         val task = tasks.find { t -> t.id == id } ?: return ResponseEntity(HttpStatus.NOT_FOUND)
