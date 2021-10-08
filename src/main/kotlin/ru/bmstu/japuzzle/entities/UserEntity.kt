@@ -6,17 +6,14 @@ import javax.persistence.*
 @Entity(name="User")
 class UserEntity(
     @Column(nullable = false, unique = true)
-    var name: String,
+    val name: String,
+
     @Id
+    @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null,
+    val id: Long? = null,
 ) {
-    fun toUser(): User? {
-        val i = id;
-        val n = name;
-        return when(i) {
-            null -> null
-            else -> User(i, n);
-        }
+    fun toUser(): User {
+        return User(id!!, name)
     }
 }

@@ -1,18 +1,27 @@
 package ru.bmstu.japuzzle.controllers
 
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import ru.bmstu.japuzzle.models.*
+import ru.bmstu.japuzzle.repositories.UserRepository
 
 @CrossOrigin
 @RestController
-@RequestMapping("/task", params = ["user"])
-class TaskController {
-
-    fun newTask(username: String, taskId: Long = 0L): Task {
-        return CheckToSolveTask(taskId, User(0L, username), RandomBlackGameField(3, 3))
+@RequestMapping("/task")
+class TaskController @Autowired constructor(
+    val userRepository: UserRepository
+) {
+    fun newTask(user: User, taskId: Long = 0L): Task {
+        return SecureTask(taskId, user, RandomBlackAndWightGameField(3, 3))
     }
 
-    val tasks: List<Task> = listOf(newTask("default", 0), newTask("solved", 1))
+    fun newTask(username: String, taskId: Long = 0L): Task {
+        return newTask(User(0L, username), taskId)
+    }
+
+    val tasks: MutableList<Task> = mutableListOf(newTask("default", 0), newTask("solved", 1))
 
     init {
         val solvedTask = tasks.find { t -> t.user.name == "solved" }
@@ -21,31 +30,46 @@ class TaskController {
 
     @GetMapping("/new")
     fun new(
-        @RequestParam("user") user: String
-    ): Task? {
-        return newTask(user)
+        @RequestParam("user") username: String
+    ): ResponseEntity<Task?> {
+        val user = userRepository.findByName(username)?.toUser() ?: return ResponseEntity(HttpStatus.UNAUTHORIZED)
+        val created = newTask(user, tasks.size.toLong())
+        tasks.add(created)
+        return ResponseEntity(created, HttpStatus.CREATED)
     }
 
     @GetMapping("/list")
     fun list(
-        @RequestParam("user") user: String
-    ): List<Task>? {
-        return tasks
+        @RequestParam("user") username: String
+    ): ResponseEntity<List<Task>?> {
+        if (userRepository.existsByName(username)) {
+            return ResponseEntity(HttpStatus.UNAUTHORIZED)
+        }
+        return ResponseEntity(tasks, HttpStatus.OK)
     }
 
     @GetMapping("/info/{id}")
     fun info(
         @PathVariable id: Long,
         @RequestParam("user") user: String
-    ): Task? {
-        return tasks.find { t -> t.id == id }
+    ): ResponseEntity<Task?> {
+        if (userRepository.existsByName(user)) {
+            return ResponseEntity(HttpStatus.UNAUTHORIZED)
+        }
+        val task = tasks.find { t -> t.id == id } ?: return ResponseEntity(HttpStatus.NOT_FOUND)
+        return ResponseEntity(task, HttpStatus.OK)
     }
 
     @PostMapping("/check/{id}")
     fun check(
         @PathVariable id: Long,
-        @RequestParam("user") user: String
-    ): Boolean {
-        return false
+        @RequestParam("user") user: String,
+        @RequestBody solution: GameField
+    ): ResponseEntity<Boolean> {
+        if (userRepository.existsByName(user)) {
+            return ResponseEntity(HttpStatus.UNAUTHORIZED)
+        }
+        val task = tasks.find { t -> t.id == id } ?: return ResponseEntity(HttpStatus.NOT_FOUND)
+        return ResponseEntity(task.check(solution), HttpStatus.OK)
     }
 }

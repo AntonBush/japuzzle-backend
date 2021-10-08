@@ -7,49 +7,36 @@ import ru.bmstu.japuzzle.models.GameField
 
 class GameFieldSerializer : JsonSerializer<GameField>() {
     override fun serialize(value: GameField?, gen: JsonGenerator?, serializers: SerializerProvider?) {
-        serialize(value, gen, serializers, leaveCells = true)
-    }
+        if (gen == null) {
+            return
+        }
+        if (value == null) {
+            gen.writeObject(value)
+            return
+        }
+        gen.writeStartObject()
+        gen.writeNumberField("width", value.width)
+        gen.writeNumberField("height", value.height)
 
-    companion object {
-        fun serialize(value: GameField?, gen: JsonGenerator?, serializers: SerializerProvider?, leaveCells: Boolean) {
-            if (gen == null) {
-                return
-            }
-            if (value == null) {
-                gen.writeObject(value)
-                return
-            }
-            gen.writeStartObject()
-            gen.writeNumberField("width", value.width)
-            gen.writeNumberField("height", value.height)
+        gen.writeFieldName("background-color")
+        gen.writeString("#${value.colors.backgroundColor.rgbToHex().substring(2)}")
+        gen.writeFieldName("colors")
+        gen.writeStartArray()
+        value.colors.colors.forEach { color ->
+            gen.writeString("#${color.rgbToHex().substring(2)}")
+        }
+        gen.writeEndArray()
 
-            gen.writeFieldName("colors")
+        gen.writeFieldName("cells")
+        gen.writeStartArray()
+        value.cells.forEach { row ->
             gen.writeStartArray()
-            for (color in value.colors) {
+            row.forEach { color ->
                 gen.writeString("#${color.rgbToHex().substring(2)}")
             }
             gen.writeEndArray()
-
-            gen.writeFieldName("cells")
-            if (leaveCells) {
-                gen.writeStartArray()
-                for (row in value.cells) {
-                    gen.writeStartArray()
-                    for (color in row) {
-                        if (color != null) {
-                            gen.writeString("#${color.rgbToHex().substring(2)}")
-                        } else {
-                            gen.writeObject(color)
-                        }
-                    }
-                    gen.writeEndArray()
-                }
-                gen.writeEndArray()
-
-            } else {
-                gen.writeObject(null)
-            }
-            gen.writeEndObject()
         }
+        gen.writeEndArray()
+        gen.writeEndObject()
     }
 }

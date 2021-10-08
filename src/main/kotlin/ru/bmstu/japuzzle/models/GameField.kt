@@ -5,10 +5,26 @@ import ru.bmstu.japuzzle.GameFieldSerializer
 import java.awt.Color
 
 @JsonSerialize(using = GameFieldSerializer::class)
-interface GameField {
-    val width: Int
-    val height: Int
-    val colors: List<Color>
-    val cells: List<List<Color?>>
-    override operator fun equals(other: Any?): Boolean
+open class GameField(
+    open val width: Int,
+    open val height: Int,
+    open val colors: FieldColors,
+) {
+    open val cells: List<List<Color>> = List(height) { List(width) { colors.backgroundColor } }
+    override operator fun equals(other: Any?): Boolean {
+        if (this === other) {
+            return true
+        }
+        if (other == null) {
+            return false
+        }
+        if (other !is GameField) {
+            return false
+        }
+        return cells == other.cells
+    }
+
+    override fun hashCode(): Int {
+        return cells.hashCode()
+    }
 }

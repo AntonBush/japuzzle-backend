@@ -19,8 +19,7 @@ class TaskSerializer : JsonSerializer<Task>() {
         gen.writeStartObject()
         gen.writeBooleanField("solved", value.solved)
 
-        gen.writeFieldName("field")
-        GameFieldSerializer.serialize(value.gameField, gen, serializers, value.solved)
+        gen.writeObjectField("field", value.gameField)
 
         gen.writeObjectField("hints", value.hints)
         gen.writeEndObject()
