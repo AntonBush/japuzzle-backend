@@ -21,7 +21,7 @@ class UserController @Autowired constructor (
         if (userRepository.existsByName(user)) {
             return ResponseEntity("User:$user is already registered", HttpStatus.FOUND);
         }
-        val u = userRepository.save(UserEntity(user));
-        return ResponseEntity("User:$user registered", HttpStatus.CREATED)
+        val u = userRepository.save(UserEntity(user))
+        return ResponseEntity("User:${u.name} registered", HttpStatus.CREATED)
     }
 }
