@@ -31,7 +31,7 @@ class TaskController @Autowired constructor(
         val st = newTask(SOLVED_USER)
         val te = taskRepository.findById(st.id).get()
         te.solved = true
-        taskRepository.save(te)
+//        taskRepository.save(te)
     }
 
     private fun newTask(user: UserEntity,
