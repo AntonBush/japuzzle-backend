@@ -23,15 +23,23 @@ class TaskController @Autowired constructor(
 ) {
     private val COLORS = listOf<Color>(Color.WHITE, Color.BLACK, Color.RED, Color.GREEN, Color.BLUE)
 
-    private val DEFAULT_USER = userRepository.save(UserEntity("default"))
-    private val SOLVED_USER = userRepository.save(UserEntity("solved"))
+    private val DEFAULT_USER_NAME = "default";
+    private val SOLVED_USER_NAME = "solved";
+    private val DEFAULT_USER = userRepository.findByName(DEFAULT_USER_NAME)
+        ?: userRepository.save(UserEntity(DEFAULT_USER_NAME))
+    private val SOLVED_USER = userRepository.findByName(SOLVED_USER_NAME)
+        ?: userRepository.save(UserEntity(SOLVED_USER_NAME))
 
     init {
-        newTask(DEFAULT_USER)
-        val st = newTask(SOLVED_USER)
-        val te = taskRepository.findById(st.id).get()
-        te.solved = true
-//        taskRepository.save(te)
+        if (taskRepository.findByUser(DEFAULT_USER).isEmpty()) {
+            newTask(DEFAULT_USER)
+        }
+        if (taskRepository.findByUser(SOLVED_USER).isEmpty()) {
+            val st = newTask(SOLVED_USER)
+            val te = taskRepository.findById(st.id).get()
+            te.solved = true
+            taskRepository.save(te)
+        }
     }
 
     private fun newTask(user: UserEntity,
