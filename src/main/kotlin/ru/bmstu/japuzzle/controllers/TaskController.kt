@@ -130,7 +130,7 @@ class TaskController @Autowired constructor(
         @PathVariable id: Long,
         @RequestParam("user") username: String,
         @RequestBody solution: GameField
-    ): ResponseEntity<Any> {
+    ): ResponseEntity<Correctness> {
         val user = userRepository.findByName(username) ?: return ResponseEntity(HttpStatus.UNAUTHORIZED)
         val userTaskEntity = (taskRepository.findByUser(user) + getDefaultTasks()).find { te -> te.id == id }
             ?: return ResponseEntity(HttpStatus.NOT_FOUND)
@@ -138,8 +138,10 @@ class TaskController @Autowired constructor(
         val s = task.check(solution)
         userTaskEntity.solved = task.solved
         taskRepository.save(userTaskEntity)
-        return ResponseEntity(object {
-            val correctness = s
-        }, HttpStatus.OK)
+        return ResponseEntity(Correctness(s), HttpStatus.OK)
     }
+
+    data class Correctness(
+        val correctness: Boolean
+    )
 }
