@@ -14,8 +14,9 @@ open class Task(
         protected set
 
     open fun check(solution: GameField): Boolean {
-        solved = gameField.hints == gameField.hints
-        return solved
+        val s = gameField.hints == gameField.hints
+        solved = solved || s
+        return s
     }
 
 

@@ -42,10 +42,11 @@ class TaskController @Autowired constructor(
         }
     }
 
-    private fun newTask(user: UserEntity,
-                w: Int = 3,
-                h: Int = 3,
-                colors: Int = 2
+    private fun newTask(
+        user: UserEntity,
+        w: Int = 3,
+        h: Int = 3,
+        colors: Int = 2
     ): Task {
         if (w < 1 || h < 1) {
             throw IllegalArgumentException("cols < 1 || rows < 1; cols:$w; rows:$h")
@@ -57,23 +58,25 @@ class TaskController @Autowired constructor(
         val fc = FieldColors(clrs)
         val gf = RandomGameField(w, h, fc)
 
-        return taskRepository.save(TaskEntity(
-            user,
-            false,
-            GameFieldEmbeddable(
-                gf.width,
-                gf.height,
-                gf.colors.backgroundColor.rgbToHex(),
-                gf.colors.colors.mapIndexed { i, c ->
-                    i to c.rgbToHex()
-                }.toMap(),
-                gf.cells.flatMapIndexed { i,  l ->
-                    l.toList().mapIndexed { j, c ->
-                        (i * gf.width + j) to c.rgbToHex()
-                    }
-                }.toMap()
-            ),
-        )).toTask()
+        return taskRepository.save(
+            TaskEntity(
+                user,
+                false,
+                GameFieldEmbeddable(
+                    gf.width,
+                    gf.height,
+                    gf.colors.backgroundColor.rgbToHex(),
+                    gf.colors.colors.mapIndexed { i, c ->
+                        i to c.rgbToHex()
+                    }.toMap(),
+                    gf.cells.flatMapIndexed { i, l ->
+                        l.toList().mapIndexed { j, c ->
+                            (i * gf.width + j) to c.rgbToHex()
+                        }
+                    }.toMap()
+                ),
+            )
+        ).toTask()
     }
 
     private fun getDefaultTasks(): List<TaskEntity> {
@@ -127,13 +130,16 @@ class TaskController @Autowired constructor(
         @PathVariable id: Long,
         @RequestParam("user") username: String,
         @RequestBody solution: GameField
-    ): ResponseEntity<Task> {
+    ): ResponseEntity<Any> {
         val user = userRepository.findByName(username) ?: return ResponseEntity(HttpStatus.UNAUTHORIZED)
         val userTaskEntity = (taskRepository.findByUser(user) + getDefaultTasks()).find { te -> te.id == id }
             ?: return ResponseEntity(HttpStatus.NOT_FOUND)
         val task = userTaskEntity.toTask()
-        userTaskEntity.solved = task.check(solution)
+        val s = task.check(solution)
+        userTaskEntity.solved = task.solved
         taskRepository.save(userTaskEntity)
-        return ResponseEntity(task, HttpStatus.OK)
+        return ResponseEntity(object {
+            val correctness = s
+        }, HttpStatus.OK)
     }
 }
