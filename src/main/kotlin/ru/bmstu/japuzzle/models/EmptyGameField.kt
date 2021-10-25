@@ -1,11 +1,10 @@
 package ru.bmstu.japuzzle.models
 
-import java.awt.Color
-
 class EmptyGameField(
     width: Int,
     height: Int,
     colors: FieldColors,
+    override val hints: Hints
 ) : GameField(
     width,
     height,

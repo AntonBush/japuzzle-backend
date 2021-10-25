@@ -23,7 +23,7 @@ class TaskSerializer : JsonSerializer<Task>() {
 
         gen.writeObjectField("field", value.gameField)
 
-        gen.writeObjectField("hints", value.hints)
+        gen.writeObjectField("hints", value.gameField.hints)
         gen.writeEndObject()
     }
 }

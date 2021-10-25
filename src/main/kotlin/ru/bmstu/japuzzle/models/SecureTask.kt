@@ -13,14 +13,16 @@ class SecureTask(
 ) {
     override val gameField: GameField
         get() = if (solved || !initFinished) {
-            super._gameField
+            super.gameField
         } else {
             emptyField
         }
     private val emptyField: GameField = EmptyGameField(
         gameField.width,
         gameField.height,
-        gameField.colors)
+        gameField.colors,
+        gameField.hints
+    )
     /* Костыль основанный на системе типов котлин
      * Свойство emptyField до инициализации этого класса == null
      * Но в базовом классе свойство gameField используется,

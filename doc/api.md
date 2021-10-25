@@ -260,7 +260,7 @@ Status: 201 Created
 #### Check Task
 
 ```
-POST /task/:task_id
+POST /task/check/:task_id
 ```
 
 ##### Parameters
