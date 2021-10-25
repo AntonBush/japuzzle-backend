@@ -40,6 +40,13 @@ open class Task(
                     color != _gameField.cells[i][j] -> {
                         count = when {
                             color == null -> {
+                                if (_gameField.cells[i][j] == _gameField.colors.backgroundColor) {
+                                    0
+                                } else {
+                                    1
+                                }
+                            }
+                            color == _gameField.colors.backgroundColor -> {
                                 1
                             }
                             _gameField.cells[i][j] == _gameField.colors.backgroundColor -> {
