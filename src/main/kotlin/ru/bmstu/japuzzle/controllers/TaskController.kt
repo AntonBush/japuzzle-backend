@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import ru.bmstu.japuzzle.entities.GameFieldEmbeddable
 import ru.bmstu.japuzzle.entities.TaskEntity
 import ru.bmstu.japuzzle.entities.UserEntity
@@ -15,6 +16,8 @@ import ru.bmstu.japuzzle.repositories.TaskRepository
 import ru.bmstu.japuzzle.repositories.UserRepository
 import ru.bmstu.japuzzle.rgbToHex
 import java.awt.Color
+import java.awt.image.BufferedImage
+import javax.imageio.ImageIO
 import kotlin.math.max
 
 @CrossOrigin
@@ -49,7 +52,8 @@ class TaskController @Autowired constructor(
         user: UserEntity,
         w: Int = 3,
         h: Int = 3,
-        colors: Int = 2
+        colors: Int = 2,
+        image: BufferedImage? = null
     ): Task {
         if (w < 1 || h < 1) {
             throw IllegalArgumentException("cols < 1 || rows < 1; cols:$w; rows:$h")
@@ -59,7 +63,11 @@ class TaskController @Autowired constructor(
         }
         val clrs = COLORS.dropLast(max(0, COLORS.size - colors))
         val fc = FieldColors(clrs)
-        val gf = RandomGameField(w, h, fc)
+        val gf: GameField = if (image == null) {
+            RandomGameField(w, h, fc)
+        } else {
+            GameField.from(image, w, h, fc)
+        }
 
         return taskRepository.save(
             TaskEntity(
@@ -94,13 +102,20 @@ class TaskController @Autowired constructor(
         @RequestParam(value = "columns", required = false) width: Int?,
         @RequestParam(value = "rows", required = false) height: Int?,
         @RequestParam(value = "colors", required = false) colors: Int?,
+        @RequestPart(required = false) file: MultipartFile?
     ): ResponseEntity<Any?> {
         val user = userRepository.findByName(username) ?: return ResponseEntity(HttpStatus.UNAUTHORIZED)
         return try {
             val w = width ?: 3
             val h = height ?: 3
             val clrs = colors ?: 2
-            val created = newTask(user, w, h, clrs)
+            val img = if (file == null) {
+                null
+            } else {
+                ImageIO.read(file.inputStream)
+            }
+            val created = newTask(user, w, h, clrs, img)
+
             ResponseEntity(created, HttpStatus.CREATED)
         } catch (e: Exception) {
             ResponseEntity(e.message, HttpStatus.BAD_REQUEST)

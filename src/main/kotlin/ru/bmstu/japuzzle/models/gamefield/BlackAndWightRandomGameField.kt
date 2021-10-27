@@ -2,7 +2,7 @@ package ru.bmstu.japuzzle.models.gamefield
 
 import java.awt.Color
 
-class RandomBlackAndWightGameField(
+class BlackAndWightRandomGameField(
     width: Int,
     height: Int,
 ) : RandomGameField(

@@ -6,7 +6,9 @@ import ru.bmstu.japuzzle.GameFieldDeserializer
 import ru.bmstu.japuzzle.GameFieldSerializer
 import ru.bmstu.japuzzle.models.hints.Hint
 import ru.bmstu.japuzzle.models.hints.Hints
+import ru.bmstu.japuzzle.seamcarving.*
 import java.awt.Color
+import java.awt.image.BufferedImage
 
 @JsonSerialize(using = GameFieldSerializer::class)
 @JsonDeserialize(using = GameFieldDeserializer::class)
@@ -79,6 +81,39 @@ open class GameField(
                 sideHints.add(Hint(color!!, count))
             }
             return@List List(sideHints.size) { i -> sideHints[i] }
+        }
+    }
+
+    companion object {
+        fun from(image: BufferedImage, width: Int, height: Int, colors: FieldColors): GameField {
+            val resizedImage = resizeImage(image, width, height)
+            val pixels = IntArray(resizedImage.width * resizedImage.height)
+            resizedImage.getRGB(0, 0, resizedImage.width, resizedImage.height, pixels, 0, resizedImage.width)
+
+            val intensityMatrix = intensityMatrixOf(
+                energyMatrixOf(
+                    colorMatrixOf(
+                        intMatrixOf(
+                            image.width, image.height, pixels
+                        )
+                    )
+                )
+            )
+
+            val field = Matrix(width, height) { i, j ->
+                return@Matrix if (intensityMatrix[i][j] / 255.0 < 0.5) {
+                    colors.backgroundColor
+                } else {
+                    colors.colors.first()
+                }
+            }
+
+            return GameField(
+                width,
+                height,
+                colors,
+                field
+            )
         }
     }
 }
