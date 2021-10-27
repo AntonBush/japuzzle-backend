@@ -2,7 +2,7 @@ package ru.bmstu.japuzzle.models
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import ru.bmstu.japuzzle.TaskSerializer
-import java.awt.Color
+import ru.bmstu.japuzzle.models.gamefield.GameField
 
 @JsonSerialize(using = TaskSerializer::class)
 open class Task(

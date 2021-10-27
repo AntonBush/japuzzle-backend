@@ -3,7 +3,6 @@ package ru.bmstu.japuzzle
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
-import ru.bmstu.japuzzle.models.GameField
 import ru.bmstu.japuzzle.models.Task
 
 

@@ -1,8 +1,8 @@
 package ru.bmstu.japuzzle.entities
 
 import ru.bmstu.japuzzle.Color
-import ru.bmstu.japuzzle.models.FieldColors
-import ru.bmstu.japuzzle.models.GameField
+import ru.bmstu.japuzzle.models.gamefield.FieldColors
+import ru.bmstu.japuzzle.models.gamefield.GameField
 import javax.persistence.Column
 import javax.persistence.ElementCollection
 import javax.persistence.Embeddable

@@ -1,9 +1,11 @@
-package ru.bmstu.japuzzle.models
+package ru.bmstu.japuzzle.models.gamefield
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import ru.bmstu.japuzzle.GameFieldDeserializer
 import ru.bmstu.japuzzle.GameFieldSerializer
+import ru.bmstu.japuzzle.models.hints.Hint
+import ru.bmstu.japuzzle.models.hints.Hints
 import java.awt.Color
 
 @JsonSerialize(using = GameFieldSerializer::class)

@@ -5,9 +5,8 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
-import com.fasterxml.jackson.databind.node.IntNode
-import ru.bmstu.japuzzle.models.FieldColors
-import ru.bmstu.japuzzle.models.GameField
+import ru.bmstu.japuzzle.models.gamefield.FieldColors
+import ru.bmstu.japuzzle.models.gamefield.GameField
 import java.awt.Color
 
 class GameFieldDeserializer : JsonDeserializer<GameField>() {

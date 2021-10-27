@@ -1,6 +1,7 @@
 package ru.bmstu.japuzzle.models
 
-import java.awt.Color
+import ru.bmstu.japuzzle.models.gamefield.EmptyGameField
+import ru.bmstu.japuzzle.models.gamefield.GameField
 
 class SecureTask(
     id: Long,

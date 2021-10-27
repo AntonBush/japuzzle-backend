@@ -1,4 +1,8 @@
-package ru.bmstu.japuzzle.models
+package ru.bmstu.japuzzle.models.gamefield
+
+import ru.bmstu.japuzzle.models.gamefield.FieldColors
+import ru.bmstu.japuzzle.models.gamefield.GameField
+import ru.bmstu.japuzzle.models.hints.Hints
 
 class EmptyGameField(
     width: Int,

@@ -1,8 +1,7 @@
-package ru.bmstu.japuzzle.models
+package ru.bmstu.japuzzle.models.hints
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import ru.bmstu.japuzzle.HintsSerializer
-import java.awt.Color
 
 @JsonSerialize(using = HintsSerializer::class)
 data class Hints(

@@ -3,7 +3,7 @@ package ru.bmstu.japuzzle
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
-import ru.bmstu.japuzzle.models.GameField
+import ru.bmstu.japuzzle.models.gamefield.GameField
 
 class GameFieldSerializer : JsonSerializer<GameField>() {
     override fun serialize(value: GameField?, gen: JsonGenerator?, serializers: SerializerProvider?) {

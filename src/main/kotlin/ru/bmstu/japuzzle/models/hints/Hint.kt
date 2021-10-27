@@ -1,4 +1,4 @@
-package ru.bmstu.japuzzle.models
+package ru.bmstu.japuzzle.models.hints
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import ru.bmstu.japuzzle.GameFieldSerializer

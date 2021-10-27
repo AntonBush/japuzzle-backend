@@ -8,6 +8,9 @@ import ru.bmstu.japuzzle.entities.GameFieldEmbeddable
 import ru.bmstu.japuzzle.entities.TaskEntity
 import ru.bmstu.japuzzle.entities.UserEntity
 import ru.bmstu.japuzzle.models.*
+import ru.bmstu.japuzzle.models.gamefield.FieldColors
+import ru.bmstu.japuzzle.models.gamefield.GameField
+import ru.bmstu.japuzzle.models.gamefield.RandomGameField
 import ru.bmstu.japuzzle.repositories.TaskRepository
 import ru.bmstu.japuzzle.repositories.UserRepository
 import ru.bmstu.japuzzle.rgbToHex

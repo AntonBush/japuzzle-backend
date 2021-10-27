@@ -1,4 +1,4 @@
-package ru.bmstu.japuzzle.models
+package ru.bmstu.japuzzle.models.gamefield
 
 import java.awt.Color
 
