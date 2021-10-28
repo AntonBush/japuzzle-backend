@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
-import ru.bmstu.japuzzle.entities.GameFieldEmbeddable
+import ru.bmstu.japuzzle.Color
 import ru.bmstu.japuzzle.entities.TaskEntity
 import ru.bmstu.japuzzle.entities.UserEntity
 import ru.bmstu.japuzzle.models.*
@@ -14,7 +14,6 @@ import ru.bmstu.japuzzle.models.gamefield.GameField
 import ru.bmstu.japuzzle.models.gamefield.RandomGameField
 import ru.bmstu.japuzzle.repositories.TaskRepository
 import ru.bmstu.japuzzle.repositories.UserRepository
-import ru.bmstu.japuzzle.rgbToHex
 import java.awt.Color
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
@@ -148,13 +147,20 @@ class TaskController @Autowired constructor(
     fun check(
         @PathVariable id: Long,
         @RequestParam("user") username: String,
-        @RequestBody solution: GameField
+        @RequestBody solution: Solution
     ): ResponseEntity<Correctness> {
         val user = userRepository.findByName(username) ?: return ResponseEntity(HttpStatus.UNAUTHORIZED)
         val userTaskEntity = (taskRepository.findByUser(user) + getDefaultTasks()).find { te -> te.id == id }
             ?: return ResponseEntity(HttpStatus.NOT_FOUND)
         val task = userTaskEntity.toTask()
-        val s = task.check(solution)
+        val solutionColorField = solution.toColorField()
+        val solutionField = GameField(
+            solutionColorField[0].size,
+            solutionColorField.size,
+            task.gameField.colors,
+            solution.toColorField()
+        )
+        val s = task.check(solutionField)
         userTaskEntity.solved = task.solved
         taskRepository.save(userTaskEntity)
         return ResponseEntity(Correctness(s), HttpStatus.OK)
@@ -163,4 +169,12 @@ class TaskController @Autowired constructor(
     data class Correctness(
         val correctness: Boolean
     )
+
+    data class Solution(
+        val solution: List<List<String>>
+    ) {
+        fun toColorField(): List<List<Color>> {
+            return solution.map { list -> list.map { s -> Color(s) } }
+        }
+    }
 }
