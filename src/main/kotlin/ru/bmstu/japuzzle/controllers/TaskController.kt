@@ -102,6 +102,22 @@ class TaskController @Autowired constructor(
         @RequestParam(value = "columns", required = false) width: Int?,
         @RequestParam(value = "rows", required = false) height: Int?,
         @RequestParam(value = "colors", required = false) colors: Int?,
+    ): ResponseEntity<Any?> {
+        return new(
+            username,
+            width,
+            height,
+            colors,
+            null
+        )
+    }
+
+    @PostMapping("/new")
+    fun new(
+        @RequestParam("user") username: String,
+        @RequestParam(value = "columns", required = false) width: Int?,
+        @RequestParam(value = "rows", required = false) height: Int?,
+        @RequestParam(value = "colors", required = false) colors: Int?,
         @RequestPart(required = false) file: MultipartFile?
     ): ResponseEntity<Any?> {
         val user = userRepository.findByName(username) ?: return ResponseEntity(HttpStatus.UNAUTHORIZED)
