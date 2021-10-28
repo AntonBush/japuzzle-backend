@@ -2,6 +2,8 @@ package ru.bmstu.japuzzle.entities
 
 import ru.bmstu.japuzzle.models.SecureTask
 import ru.bmstu.japuzzle.models.Task
+import ru.bmstu.japuzzle.models.gamefield.GameField
+import ru.bmstu.japuzzle.rgbToHex
 import javax.persistence.*
 
 @Entity
@@ -32,5 +34,15 @@ class TaskEntity(
             t.check(gf)
         }
         return t
+    }
+
+    companion object {
+        fun newInstance(gf: GameField, user: UserEntity): TaskEntity {
+            return TaskEntity(
+                user,
+                false,
+                GameFieldEmbeddable.newInstance(gf),
+            )
+        }
     }
 }

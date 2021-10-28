@@ -3,6 +3,7 @@ package ru.bmstu.japuzzle.entities
 import ru.bmstu.japuzzle.Color
 import ru.bmstu.japuzzle.models.gamefield.FieldColors
 import ru.bmstu.japuzzle.models.gamefield.GameField
+import ru.bmstu.japuzzle.rgbToHex
 import javax.persistence.Column
 import javax.persistence.ElementCollection
 import javax.persistence.Embeddable
@@ -39,5 +40,23 @@ class GameFieldEmbeddable(
                 }
             }
         )
+    }
+
+    companion object {
+        fun newInstance(gf: GameField): GameFieldEmbeddable {
+            return GameFieldEmbeddable(
+                gf.width,
+                gf.height,
+                gf.colors.backgroundColor.rgbToHex(),
+                gf.colors.colors.mapIndexed { i, c ->
+                    i to c.rgbToHex()
+                }.toMap(),
+                gf.cells.flatMapIndexed { i, l ->
+                    l.toList().mapIndexed { j, c ->
+                        (i * gf.width + j) to c.rgbToHex()
+                    }
+                }.toMap()
+            )
+        }
     }
 }

@@ -61,6 +61,7 @@ class TaskController @Autowired constructor(
         if (colors < 2) {
             throw IllegalArgumentException("colors < 2; colors:$colors")
         }
+
         val clrs = COLORS.dropLast(max(0, COLORS.size - colors))
         val fc = FieldColors(clrs)
         val gf: GameField = if (image == null) {
@@ -70,23 +71,7 @@ class TaskController @Autowired constructor(
         }
 
         return taskRepository.save(
-            TaskEntity(
-                user,
-                false,
-                GameFieldEmbeddable(
-                    gf.width,
-                    gf.height,
-                    gf.colors.backgroundColor.rgbToHex(),
-                    gf.colors.colors.mapIndexed { i, c ->
-                        i to c.rgbToHex()
-                    }.toMap(),
-                    gf.cells.flatMapIndexed { i, l ->
-                        l.toList().mapIndexed { j, c ->
-                            (i * gf.width + j) to c.rgbToHex()
-                        }
-                    }.toMap()
-                ),
-            )
+            TaskEntity.newInstance(gf, user)
         ).toTask()
     }
 
